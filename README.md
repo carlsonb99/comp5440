@@ -1,2 +1,4 @@
-# comp5440
-Data Mining
+# RandomForest
+UML Data Mining (COMP 5540) Project
+
+Random Forrest in Python
