@@ -44,7 +44,7 @@ def main():
 
     if args.model == "0":
         print "Testing Decision Tree model"
-        model = DecisionTree(args.max_depth)
+        model = DecisionTree()
     else:
         print "Testing Random Forest model"
         model = RandomForest(args.tree_nums)
