@@ -1,19 +1,25 @@
 import math
+import random
 
+"""
 class TreeNode(object):
     def __init__(self, isLeaf=False):
         # Your code here
 
     def predict(self, sample):
-        """
-        This function predicts the label of given sample
-        """
+
+        # This function predicts the label of given sample
+
         # Your code here
+
+"""
+
 
 class DecisionTree(object):
     """
     Class of the Decision Tree
     """
+
     def __init__(self):
         self.root = None
 
@@ -40,12 +46,23 @@ class DecisionTree(object):
             attributes: [0, 2, 5, 7,...]
         """
 
-    def predict(self, sample):
+        # Randomly choose the attribute subset
+        sub_attributes = []
+        for attr in attributes:
+            if random.random() > .5:
+                sub_attributes.append(attr)
+
+        # Display the sub attribute set we will be using
+        print sub_attributes
+
+        print self.split_set(records, 2, 'w')
+
+    # def predict(self, sample):
         """
         This function predict the label for new sample by calling the predict
         function of the root node
         """
-        return self.root.predict(sample)
+        # return self.root.predict(sample)
 
     # def stopping_cond(self, records, attributes):
         """
@@ -66,10 +83,52 @@ class DecisionTree(object):
         This function should return a label that is assigned to the node
         """
 
-    # def find_best_split(self, records, attributes):
+    def label_count(self, records):
+        """
+        This function provides the count of the class labels for provided sets.
+        """
+        results = []
+        for record in records:
+            r = record['label']
+            if r not in results:
+                results[r] = 0
+            results[r] += 1
+        return results
+
+    def entropy(self, records):
+        """
+        This function finds the entropy of the provided set.
+        """
+        log2 = lambda x: log(x) / log(2)
+        results = label_count(records)
+        ent = 0.0
+        for r in results.keys():
+            p = float(results[r]) / len(records)
+            ent = ent - p * log2(p)
+        return ent
+
+    def split_set(self, records, attribute, key):
+        """
+        This function splits the set into two subsets based on a given key value
+        from an attribute. It will only perform a binary split, not multi-way.
+        """
+        left_subset = []
+        right_subset = []
+
+        # If the key value exists in the record, add it to the left subset
+        # otherwise, place it in the right subset
+        for record in records:
+            if record['attributes'][attribute] == key:
+                left_subset.append(record)
+            else:
+                right_subset.append(record)
+''
+        return left_subset, right_subset
+
+    def find_best_split(self, records, attributes):
         """
         The find_best_split() function determines which attribute should be
-        selected as the test condition for splitting the trainig records.
+        selected as the test condition for splitting the training records.
 
         This function should return multiple information:
             attribute selected for splitting
@@ -77,6 +136,10 @@ class DecisionTree(object):
             left subset
             right subset
         """
+
+        # Find all of the attributes values (keys)
+        for attr in range(0,len(attributes)):
+            
 
     # def tree_growth(self, records, attributes):
         """
