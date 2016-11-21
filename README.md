@@ -19,7 +19,7 @@ python main.py -m 1
 #### *Creating a Random Forest*
 1. The Random Forest Class first produces the bootstrap samples by gathering the same number of samples as the size of the provided data set:
 
-```python
+	```python
         bootstrap_records = []
         size = len(records)
 
@@ -27,15 +27,15 @@ python main.py -m 1
         # Build bootstrap records from size of records, with random selection of records
         for i in range(0, size):
             bootstrap_records.append(records[random.randrange(0, (size - 1), 1)])
-```
+	```
 
 2. Using this bootstrap sample set, the Random Forest class then creates a DecisionTree() with it and adds the tree to the forest:
 
-```python
+	```python
 	     tree = DecisionTree()
        tree.train(self.bootstrap(records), attributes)
        self.forest.append(tree)
-```
+	```
 
 3. Steps 1 & 2 are repeated for the number of requested trees (self.tree_num) in the forest.
 
@@ -43,7 +43,7 @@ python main.py -m 1
 #### *Prediction with a Random Forest*
 1. The predict(self, sample) function is called with a sample record to predict on. A predictions dictionary is created to store the predicted label counts. The forest is then looped through, calling the DecisionTree.predict(self, sample) function on each tree in the forest, updating the prediction label key in the dictionary. Finally, the maximum value key is returned as the majority vote for the predicted label of the sample.
 
-```python
+	```python
         predictions = {}
         # Create a dictionary of the class label predictions
         for tree in self.forest:
@@ -52,15 +52,15 @@ python main.py -m 1
                 predictions[r] = 0
             predictions[r] += 1
       
-# Find the key with the maximum value, and return it as the prediction
+	# Find the key with the maximum value, and return it as the prediction
         return max(predictions, key=predictions.get)
-```
+	```
 
 #### Decision Tree Class
 #### *Creating a Decision Tree*
 1. The train(self) function is the entry point to the creation of a decision tree. It handles the selection of random attributes to build the tree on and the calling of tree_growth() function.
 
-```python
+	```python
         # Randomly choose the attribute subset
         rand_attributes = []
         for attr in attributes:
@@ -70,17 +70,17 @@ python main.py -m 1
 
         # Create the tree with the training data
         self.tree_growth(records, rand_attributes)
-```
+	```
 
 2. The tree_growth(self, records, attributes) function recursively builds the decision tree by splitting on select attributes by way of entropy.
 
-```python
-split_sets, split_attr, max_gain = self.find_best_split(records, attributes)
-```
+	```python
+	split_sets, split_attr, max_gain = self.find_best_split(records, attributes)
+	```
 
 3. find_best_split(self, records, attributes) loops through all of the attributes and their values, testing the splits on each by means of the split_set(self, records, attribute, key) function. The Information Gain is calculated using entropy. The attribute and respective value with the largest Information Gain is chosen to split on. The split sets, attribute information and information gain is returned.
 
-```python
+	```python
         # Find all of each attribute's values from sub_attributes
         for attr in range(0, len(attributes)):
             attr_values = {}
@@ -107,11 +107,11 @@ self.entropy(right_subset)
 
 
         return split_sets, split_attr, max_gain
-```
+	```
 
 4. Back in tree_growth(self, records, attributes), if the Information Gain is larger than 0 and stopping_cond(self, records, attributes) returns false, then tree_growth(self, records, attributes) will be called again on the left and right subsets, and a non-leaf TreeNode() will be created, initializing the class variables respectively.
 
-```python
+	```python
         # If gain is greater than 0 and stopping condition is not met, we want to
         # split again, other wise it is a leaf node
         if max_gain > 0 and not self.stopping_cond(records, attributes):
@@ -127,31 +127,31 @@ self.entropy(right_subset)
             self.root.lb = true_branch
             self.root.rb = false_branch
             return self.root
-```
+	```
 
 If the gain is < 0 or the stopping condition is met, then a leaf TreeNode() will be created, initializing the class variables respectively.
 
-```python
+	```python
       else:
             class_label_counts = self.class_label_count(records)
             node = TreeNode(isLeaf=True)
             node.results = class_label_counts
             node.classification = self.classify(class_label_counts)
             return node
-```
+	```
 
 Once the recursion completes, the root of the tree will be returned and stored in the self.root of the DecisionTree().
 
 #### *Prediction with a Decision Tree*
 1. The DecisionTree.predict(self, sample) function is called, which calls the predict(self, sample) of the TreeNode() root.
 
-```python
-return self.root.predict(sample)
-```
+	```python
+	return self.root.predict(sample)
+	```
 
 2. The TreeNode.predict(self, sample) function iterates through the branches of the DecisionTree based on the split attribute of the node it is on and the sample’s attribute value. Once a leaf node of the tree is reached, the branch’s classification label is returned as the predicted class label.
 
-```python
+	```python
         branch = self
 
 
@@ -166,8 +166,8 @@ return self.root.predict(sample)
 
         # Once you reach the leaf, return the classification label
         return branch.classification
-```
-
+	```
   
-Reference site for a Decision Tree in Python:
+  
+*Reference site for a Decision Tree in Python:*
 http://www.patricklamle.com/Tutorials/Decision%20tree%20python/tuto_decision%20tree.html
