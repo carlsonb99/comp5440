@@ -131,14 +131,14 @@ self.entropy(right_subset)
 
 If the gain is < 0 or the stopping condition is met, then a leaf TreeNode() will be created, initializing the class variables respectively.
 
-	```python
-      else:
+```python
+      	else:
             class_label_counts = self.class_label_count(records)
             node = TreeNode(isLeaf=True)
             node.results = class_label_counts
             node.classification = self.classify(class_label_counts)
             return node
-	```
+```
 
 Once the recursion completes, the root of the tree will be returned and stored in the self.root of the DecisionTree().
 
