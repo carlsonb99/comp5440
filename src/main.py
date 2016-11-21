@@ -30,9 +30,6 @@ def test_model(model, training_file_path, testing_file_path):
     test_records = load_data(testing_file_path)[0]
     correct_cnt = 0
 
-    # print 'Predict: ' + str(model.predict(test_records[0]))
-    # print 'Sample: ' + test_records[0]["label"]
-
     for sample in test_records:
         if model.predict(sample) == sample["label"]:
             correct_cnt += 1
@@ -45,8 +42,8 @@ def main():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', default="0")
-    parser.add_argument('-t', '--training', default="../data/mushrooms_train.data")
-    parser.add_argument('-e', '--testing', default="../data/mushrooms_test.data")
+    parser.add_argument('-t', '--training', default="data/mushrooms_train.data")
+    parser.add_argument('-e', '--testing', default="data/mushrooms_test.data")
     parser.add_argument('-d', '--max_depth', default=10)
     parser.add_argument('-n', '--tree_nums', default=20)
     args = parser.parse_args()

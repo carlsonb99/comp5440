@@ -1,6 +1,6 @@
+import random
 import math
 from math import log
-import random
 
 
 class TreeNode(object):
@@ -9,40 +9,25 @@ class TreeNode(object):
         self.attribute = -1
         self.value = None
         self.results = None
-        self.tb = None
-        self.fb = None
+        self.lb = None
+        self.rb = None
         self.isLeaf = isLeaf
         self.classification = None
 
     def predict(self, sample):
-
         # This function predicts the label of given sample
         branch = self
 
         while branch.isLeaf == False:
             if sample['attributes'][branch.attribute] == branch.value:
                 # True Branch
-                branch = branch.tb
+                branch = branch.lb
             else:
                 # False Branch
-                branch = branch.fb
+                branch = branch.rb
 
         # Once you reach the leaf, return the classification label
         return branch.classification
-
-    def printtree(self, tree, indent=''):
-        # Is this a leaf node?
-        if tree.isLeaf == True:
-            print tree.classification + ': ' + str(tree.results)
-        else:
-            # Print the criteria
-            print str(tree.attribute) + ':' + str(tree.value) + '? '
-
-            # Print the branches
-            print indent + 'T->',
-            self.printtree(tree.tb, indent + '  ')
-            print indent + 'F->',
-            self.printtree(tree.fb, indent + '  ')
 
 
 class DecisionTree(object):
@@ -77,19 +62,13 @@ class DecisionTree(object):
         """
 
         # Randomly choose the attribute subset
-        sub_attributes = []
+        rand_attributes = []
         for attr in attributes:
             if random.random() > .5:
-                sub_attributes.append(attr)
-
-        # Display the sub attribute set we will be using
-        print sub_attributes
+                rand_attributes.append(attr)
 
         # Create the tree with the training data
-        self.tree_growth(records, sub_attributes)
-
-        # Print the tree (debug)
-        self.root.printtree(self.root)
+        self.tree_growth(records, rand_attributes)
 
     def predict(self, sample):
         """
@@ -98,7 +77,7 @@ class DecisionTree(object):
         """
         return self.root.predict(sample)
 
-    # def stopping_cond(self, records, attributes):
+    def stopping_cond(self, records, attributes):
         """
         The stopping_cond() function is used to terminate the tree-growing
         process by testing whether all the records have either the same class
@@ -107,6 +86,19 @@ class DecisionTree(object):
         This function should return True/False to indicate whether the stopping
         criterion is met
         """
+        labels = {}
+
+        # Check if all the class labels are the same
+        for record in records:
+            r = record["label"]
+            if r not in labels:
+                labels[r] = 0
+            labels[r] += 1
+
+        # If one of the class labels is equal to the record count, stop
+        for key in labels.keys():
+            if labels[key] == len(records):
+                return True
 
     def classify(self, records):
         """
@@ -116,15 +108,9 @@ class DecisionTree(object):
 
         This function should return a label that is assigned to the node
         """
-        max_count = 0
-        classification = None
 
-        for key in records.keys():
-            if records[key] > max_count:
-                max_count = records[key]
-                classification = key
-
-        return classification
+        # Get the key with the maximum value and return it
+        return max(records, key=records.get)
 
     def class_label_count(self, records):
         """
@@ -143,13 +129,12 @@ class DecisionTree(object):
         """
         This function finds the entropy of the provided set.
         """
-        log2 = lambda x: log(x) / log(2)
         results = self.class_label_count(records)
-        ent = 0.0
+        e = 0.0
         for r in results.keys():
             p = float(results[r]) / len(records)
-            ent = ent - p * log2(p)
-        return ent
+            e = e - p * math.log(p, 2)
+        return e
 
     def split_set(self, records, attribute, key):
         """
@@ -228,18 +213,19 @@ class DecisionTree(object):
 
         split_sets, split_attr, max_gain = self.find_best_split(records, attributes)
 
-        # If gain is greater than 0, we want to split again, other wise it is a leaf node
-        if max_gain > 0:
-            true_branch = self.tree_growth(split_sets[0], attributes)
-            false_branch = self.tree_growth(split_sets[1], attributes)
+        # If gain is greater than 0 and stopping condition is not met, we want to
+        # split again, other wise it is a leaf node
+        if max_gain > 0 and not self.stopping_cond(records, attributes):
+            left_branch = self.tree_growth(split_sets[0], attributes)
+            right_branch = self.tree_growth(split_sets[1], attributes)
 
             # Create a Tree Node, and set the root of the decision tree to it. (The
             # final self.root will be the tree root)
             self.root = TreeNode()
             self.root.attribute = split_attr[0]
             self.root.value = split_attr[1]
-            self.root.tb = true_branch
-            self.root.fb = false_branch
+            self.root.lb = left_branch
+            self.root.rb = right_branch
             return self.root
         else:
             class_label_counts = self.class_label_count(records)
